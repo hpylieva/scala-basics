@@ -8,6 +8,7 @@ object IntervalMain{
 
     val i3 = new Interval(2, 5)
     val i4 = new Interval(3, 9)
+    println(i3.upperBound)
     println( i3 + i4 )
     println( i3.+(i4) )
 

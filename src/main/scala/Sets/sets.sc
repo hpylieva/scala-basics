@@ -26,8 +26,8 @@ object  sets{
   def exists(s:Set, f: Int => Boolean): Boolean = !forall(s, x => !f(x))
 
   /*
-  the result of map is a new set which comprises elements {y} such that
-  f(y) is in initial set s
+   * the result of map is a new set which comprises elements {y} such that
+   * f(y) is in initial set s
    */
   def map(s: Set, f: Int => Int): Set = (x) => exists(s, y => f(y) == x)
 

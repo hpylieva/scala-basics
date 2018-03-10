@@ -15,6 +15,7 @@ object fibonacci{
   fib(3)
   fib(4)
   fib(5)
+  fib(6)
 
   def func(x: Int, y: => /*CBN param*/ Int) =
     if(x>y) x else y
