@@ -1,5 +1,4 @@
 
-
 import org.scalatest.FunSuite
 
 class IntervalTest extends FunSuite {

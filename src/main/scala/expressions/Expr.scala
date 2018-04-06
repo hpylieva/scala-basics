@@ -1,59 +1,82 @@
 case class CustomException(msg: String)  extends Exception
 
+
 sealed trait Expr {
-  def isReducible: Boolean
-  def eval: Int
-}
+  def isReducible: Boolean = this match {
+    case Number(_) => false
+    case Bool(_) => false
+    case _ => true
+  }
 
-//  def eval: Int = this match {
-//    case Number(n) => n
-//    case Sum(lOp, rOp) => lOp.eval + rOp.eval
-//    case Prod(lOp, rOp) => lOp.eval * rOp.eval
-//    case Var(name) => 0
-//  }
-
-case class Number(n: Int) extends Expr{
-  override def isReducible: Boolean = false
-  override def toString: String = n.toString
-  override def eval: Int = n
-}
-
-case class Bool(b: Boolean) extends Expr{
-  override def isReducible: Boolean = false
-  override def toString: String = b.toString
-  override def eval: Int = 0
-}
-
-case class Var(name: String) extends Expr{
-  override def isReducible: Boolean = true
-  override def toString: String = name
-  override def eval: Int = 0 // TODO:
-}
-
-case class Sum(lOp: Expr, rOp: Expr) extends Expr{
-  override def isReducible: Boolean = true
-  override def toString: String = s"$lOp + $rOp"
-  override def eval: Int = lOp.eval + rOp.eval
-}
-
-case class Prod(lOp: Expr, rOp: Expr) extends Expr{
-  override def isReducible: Boolean = true
-  override def toString: String = lOp match {
-    case Sum(_, _) => rOp match {
-      case Sum(_, _) => s"($lOp) * ($rOp)"
-      case _ => s"($lOp) * $rOp"
+  def evaluate: Expr = this match {
+    case Number(n) => Number(n)
+    case Bool(b) => Bool(b)
+    case Sum(lOp, rOp) => {
+      val left = lOp match {
+        case Number(_) => lOp
+        case _ => lOp.evaluate
+      }
+      val right = rOp match {
+        case Number(_) => rOp
+        case _ => rOp.evaluate
+      }
+      Number(left.asInstanceOf[Number].n + right.asInstanceOf[Number].n)
     }
-    case _ => rOp match {
-      case Sum(_, _) => s"$lOp * ($rOp)"
-      case _ => s"$lOp * $rOp"
+
+    case Prod(lOp, rOp) => {
+      val left = lOp match {
+        case Number(_) => lOp
+        case _ => lOp.evaluate
+      }
+      val right = rOp match {
+        case Number(_) => rOp
+        case _ => rOp.evaluate
+      }
+      Number(left.asInstanceOf[Number].n * right.asInstanceOf[Number].n)
+    }
+
+    case Less(lOp, rOp) => {
+      val left = lOp match {
+        case Number(_) => lOp
+        case _ => lOp.evaluate
+      }
+      val right = rOp match {
+        case Number(_) => rOp
+        case _ => rOp.evaluate
+      }
+      Bool(left.asInstanceOf[Number].n < right.asInstanceOf[Number].n)
     }
   }
-  override def eval: Int = lOp.eval * rOp.eval
+
+  override def toString: String = this match {
+    case Number(n) => n.toString
+    case Bool(b) => b.toString
+    case Var(name) => name
+    case Sum(lOp, rOp) => s"$lOp + $rOp"
+    case Prod(lOp, rOp) => lOp match {
+      case Sum(_, _) => rOp match {
+        case Sum(_, _) => s"($lOp) * ($rOp)"
+        case _ => s"($lOp) * $rOp"
+      }
+      case _ => rOp match {
+        case Sum(_, _) => s"$lOp * ($rOp)"
+        case _ => s"$lOp * $rOp"
+      }
+    }
+    case Less(lOp, rOp) => s"$lOp < $rOp"
+  }
 }
 
-case class Less(lOp: Expr, rOp: Expr) extends Expr{
-  override def isReducible: Boolean = true
-  override def toString: String = s"$lOp < $rOp"
+case class Number(n: Int) extends Expr
 
-  override def eval: Int = 0 //todo
-}
+case class Bool(b: Boolean) extends Expr
+
+case class Var(name: String) extends Expr
+
+case class Sum(lOp: Expr, rOp: Expr) extends Expr
+
+case class Prod(lOp: Expr, rOp: Expr) extends Expr
+
+case class Less(lOp: Expr, rOp: Expr) extends Expr
+
+//case class IfElse()
