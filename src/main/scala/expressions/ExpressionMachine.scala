@@ -16,49 +16,51 @@ object ExpressionMachine {
         Option(expr)
     }
 
-    def reductionStep(expr: Expr, env: Map[String, Any]): Expr = expr match {
-      case Prod(lOp, rOp) => {
-        if (lOp.isReducible) Prod(reductionStep(lOp, env), rOp)
-        else if (rOp.isReducible) Prod(lOp, reductionStep(rOp, env))
+
+
+    def reductionStep(expr: Expr, env: Map[String, Any]): Expr = {
+
+      def func(applyFunc: (Expr, Expr) => Expr, lOp: Expr, rOp: Expr, expr: Expr): Expr = {
+        if (lOp.isReducible) applyFunc(reductionStep(lOp, env), rOp)
+        else if (rOp.isReducible) applyFunc(lOp, reductionStep(rOp, env))
         else lOp match {
-          case Number(lOp) => rOp match {
-            case Number(rOp) => expr.evaluate
-            case _ => throw new CustomException("Exception: Wrong Right Operand type in Product.")
+          case Number(_) => rOp match {
+            case Number(_) => expr.evaluate
+            case _ => throw CustomException("Exception: Wrong Right Operand type.")
           }
-          case _ => throw new CustomException("Exception: Wrong Left Operand type in Product.")
+          case _ => throw CustomException("Exception: Wrong Left Operand type.")
         }
       }
 
-      case Sum(lOp, rOp) => {
-        if (lOp.isReducible) Sum(reductionStep(lOp, env), rOp)
-        else if (rOp.isReducible) Sum(lOp, reductionStep(rOp, env))
-        else lOp match {
-          case Number(lOp) => rOp match {
-            case Number(rOp) => expr.evaluate
-            case _ => throw new CustomException("Exception: Wrong Right Operand type in Sum.")
-          }
-          case _ => throw new CustomException("Exception: Wrong Left Operand type in Sum.")
-        }
-      }
+      expr match {
+        case Prod(lOp, rOp) => func(Prod.apply, lOp, rOp, expr)
 
-      case Var(name) => {
-        if (env.contains(name)) env(name) match {
-          case i: Int => Number(i)
-          case b: Boolean => Bool(b)
-          case _ => throw new CustomException("Exception: In this Tiny Language Var cannot be of the type specified. Sorry for inconvenience =)")
-        }
-        else throw new CustomException("Exception: Var name is not present in Environment.")
-      }
+        case Sum(lOp, rOp) => func(Sum.apply, lOp, rOp, expr)
 
-      case Less(lOp, rOp) => {
-        if (lOp.isReducible) Less(reductionStep(lOp, env), rOp)
-        else if (rOp.isReducible) Less(lOp, reductionStep(rOp, env))
-        else lOp match {
-          case Number(lOp) => rOp match {
-            case Number(rOp) => expr.evaluate
-            case _ => throw new CustomException("Exception: Wrong Right Operand type in Less.")
+        case Var(name) => {
+          if (env.contains(name)) env(name) match {
+            case i: Int => Number(i)
+            case b: Boolean => Bool(b)
+            case _ => throw CustomException("Exception: In this Tiny Language Var cannot be of the type specified. Sorry for inconvenience =)")
           }
-          case _ => throw new CustomException("Exception: Wrong Left Operand type in Less.")
+          else throw CustomException("Exception: Var name is not present in Environment.")
+        }
+
+        case Less(lOp, rOp) => func(Less.apply, lOp, rOp, expr)
+
+        case IfElse(conditionExpr, ifExpr, elseExpr) => {
+          if (conditionExpr.isReducible) IfElse(reductionStep(conditionExpr, env), ifExpr, elseExpr)
+          else conditionExpr match {
+            case Bool(b) => if (b) {
+              if (ifExpr.isReducible) reductionStep(ifExpr, env)
+              else ifExpr.evaluate
+            }
+            else {
+              if (elseExpr.isReducible) reductionStep(elseExpr, env)
+              else elseExpr.evaluate
+            }
+            case _ => throw new Exception("Exception: IfElse condition type is not Bool.")
+          }
         }
       }
     }
