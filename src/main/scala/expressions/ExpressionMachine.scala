@@ -22,9 +22,7 @@ object ExpressionMachine {
         else if (rOp.isReducible) Prod(lOp, reductionStep(rOp, env))
         else lOp match {
           case Number(lOp) => rOp match {
-            case Number(rOp) => rOp match {
-              case i: Int => Number(i)
-            }
+            case Number(rOp) => expr.evaluate
             case _ => throw new CustomException("Exception: Wrong Right Operand type in Product.")
           }
           case _ => throw new CustomException("Exception: Wrong Left Operand type in Product.")
@@ -63,7 +61,6 @@ object ExpressionMachine {
           case _ => throw new CustomException("Exception: Wrong Left Operand type in Less.")
         }
       }
-
     }
 
   }
