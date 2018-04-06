@@ -1,7 +1,7 @@
 object ExpressionMachine {
 
   final class Machine {
-    def run(expr: Expr, env: Map[String, Any]): Option[Expr] = {
+    def run(expr: Expr, env: Map[String, Expr]): Option[Expr] = {
       println(expr)
 
       if (expr.isReducible) {
@@ -16,9 +16,7 @@ object ExpressionMachine {
         Option(expr)
     }
 
-
-
-    def reductionStep(expr: Expr, env: Map[String, Any]): Expr = {
+    def reductionStep(expr: Expr, env: Map[String, Expr]): Expr = {
 
       def func(applyFunc: (Expr, Expr) => Expr, lOp: Expr, rOp: Expr, expr: Expr): Expr = {
         if (lOp.isReducible) applyFunc(reductionStep(lOp, env), rOp)
@@ -38,11 +36,7 @@ object ExpressionMachine {
         case Sum(lOp, rOp) => func(Sum.apply, lOp, rOp, expr)
 
         case Var(name) => {
-          if (env.contains(name)) env(name) match {
-            case i: Int => Number(i)
-            case b: Boolean => Bool(b)
-            case _ => throw CustomException("Exception: In this Tiny Language Var cannot be of the type specified. Sorry for inconvenience =)")
-          }
+          if (env.contains(name)) env(name)
           else throw CustomException("Exception: Var name is not present in Environment.")
         }
 
@@ -59,7 +53,7 @@ object ExpressionMachine {
               if (elseExpr.isReducible) reductionStep(elseExpr, env)
               else elseExpr.evaluate
             }
-            case _ => throw new Exception("Exception: IfElse condition type is not Bool.")
+            case _ => throw CustomException("Exception: IfElse condition type is not Bool.")
           }
         }
       }
