@@ -1,35 +1,45 @@
-case class CustomException(msg: String) extends Exception
-
 sealed trait Expr {
   def isReducible: Boolean = this match {
-    case Number(_) => false
-    case Bool(_) => false
+    case Number(_) | Bool(_) => false
     case _ => true
   }
 
-  def processArgsOfBinaryOperation(Operand: Expr): Expr = Operand match{
-    case Number(_) => Operand
-    case _ => Operand.evaluate.asInstanceOf[Number]
+  def toInt: Int = this match {
+    case Number(n) => n
+    case _ => throw CustomException("Exception: Wrong type in "+ this.getClass)
   }
 
-  def evaluate: Expr = this match {
-    case Number(n) => Number(n)
-    case Bool(b) => Bool(b)
-    case Sum(lOp, rOp) =>
-      Number(processArgsOfBinaryOperation(lOp).asInstanceOf[Number].n
-        + processArgsOfBinaryOperation(rOp).asInstanceOf[Number].n)
+  def toBool: Boolean = this match {
+    case Bool(b) => b
+    case _ => throw CustomException("Exception: Wrong type in " + this.getClass)
+  }
 
-    case Prod(lOp, rOp) =>
-      Number(processArgsOfBinaryOperation(lOp).asInstanceOf[Number].n
-        * processArgsOfBinaryOperation(rOp).asInstanceOf[Number].n)
+  def +(that: Expr): Int = this.toInt + that.toInt
+  def *(that: Expr): Int = this.toInt * that.toInt
+  def <(that: Expr): Boolean = this.toInt < that.toInt
 
-    case Less(lOp, rOp) =>
-      Bool(processArgsOfBinaryOperation(lOp).asInstanceOf[Number].n
-        < processArgsOfBinaryOperation(rOp).asInstanceOf[Number].n)
+  def evaluate: Expr = {
+    def evaluateOperand(Operand: Expr): Expr = Operand match{
+      case Number(_) | Bool(_) => Operand
+      case _ => Operand.evaluate
+    }
 
-    case IfElse(conditionExpr, ifExpr, elseExpr) =>
-      if (conditionExpr.asInstanceOf[Bool].b) ifExpr else elseExpr
+    this match {
+      case Number(n) => Number(n)
+      case Bool(b) => Bool(b)
+      case Sum(lOp, rOp) =>
+        Number(evaluateOperand(lOp) + evaluateOperand(rOp))
 
+      case Prod(lOp, rOp) =>
+        Number(evaluateOperand(lOp) * evaluateOperand(rOp))
+
+      case Less(lOp, rOp) =>
+        Bool(evaluateOperand(lOp) < evaluateOperand(rOp))
+
+      case IfElse(conditionExpr, ifExpr, elseExpr) =>
+        if (conditionExpr.toBool) ifExpr.evaluate else elseExpr.evaluate
+
+    }
   }
 
   override def toString: String = this match {
@@ -58,15 +68,9 @@ sealed trait Expr {
 }
 
 case class Number(n: Int) extends Expr
-
 case class Bool(b: Boolean) extends Expr
-
 case class Var(name: String) extends Expr
-
 case class Sum(lOp: Expr, rOp: Expr) extends Expr
-
 case class Prod(lOp: Expr, rOp: Expr) extends Expr
-
 case class Less(lOp: Expr, rOp: Expr) extends Expr
-
 case class IfElse(conditionExpr: Expr, ifExpr: Expr, elseExpr: Expr) extends Expr
