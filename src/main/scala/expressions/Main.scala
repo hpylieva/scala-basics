@@ -40,8 +40,8 @@ object Main{
       m.run(
         Assign("x",Prod(Sum(Number(2), Number(1)),Sum(Number(4),Number(3))))
         )
-      m.run(IfElseStatement(Less(Sum(Number(3), Number(4)),Number(5)),
-        Assign("x",Number(10)),
+      m.run(IfElseStatement(Less(Prod(Number(0), Number(4)),Number(5)),
+        Assign("x",Sum(Number(10), Number(2))),
         Assign("x", Number(32))))
 //      println("Final state")
 //      m.printEnv()

@@ -39,8 +39,7 @@ final class Machine(environment:  Map[String, Expr]){
       case Less(lOp, rOp) => reduceBinaryOperation(Less.apply, lOp, rOp)
 
       case IfElse(conditionExpr, ifExpr, elseExpr) => {
-        if (conditionExpr.isReducible)
-          IfElse(reductionStep(conditionExpr), ifExpr, elseExpr)
+        if (conditionExpr.isReducible) IfElse(reductionStep(conditionExpr), ifExpr, elseExpr)
         else
           if (conditionExpr.toBool) reductionStep(ifExpr)
             else reductionStep(elseExpr)
@@ -67,19 +66,20 @@ final class Machine(environment:  Map[String, Expr]){
   private def reductionStep(statement: Statement): Statement = statement match{
 
     case Assign(name, expr) => {
-      if (expr.isReducible) Assign(name, reductionStep(expr))
-      else
+      if (expr.isReducible) Assign(name, reductionStep(expr) )
+      else {
         env+= name -> expr
         DoNothing
+      }
     }
-
     case IfElseStatement(condition,ifSt,elseSt) => {
       if (condition.isReducible)
         IfElseStatement(reductionStep(condition), ifSt, elseSt)
       else
-        if (condition.toBool) reductionStep(ifSt)
-          else reductionStep(elseSt)
+      if (condition.toBool) reductionStep(ifSt)
+      else reductionStep(elseSt)
     }
+
 
   }
 
