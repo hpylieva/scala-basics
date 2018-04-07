@@ -82,13 +82,10 @@ final class Machine(environment:  Map[String, Expr]){
     }
 
     case WhileLoop(condition, loopSt) => {
-      if (cond.equals(Empty())){
-        cond = condition
-      }
-//      IfElseStatement(condition, loopSt, DoNothing)
-      if (condition.isReducible) {
+      if (cond.equals(Empty())) cond = condition
+
+      if (condition.isReducible)
         WhileLoop(reductionStep(condition), loopSt)
-      }
       else
         if (condition.toBool) {
           this.run(loopSt)
@@ -97,7 +94,17 @@ final class Machine(environment:  Map[String, Expr]){
         else {
         cond = Empty()
         DoNothing
+        }
+    }
+
+    case Sequence(list) => {
+      if (list.nonEmpty){
+        this.run(list.head)
+        if (list.length > 1)
+          Sequence(list.drop(1))
+        else DoNothing
       }
+      else DoNothing
     }
 
 

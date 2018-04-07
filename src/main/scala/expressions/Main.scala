@@ -43,8 +43,9 @@ object Main{
 //      m.run(IfElseStatement(Less(Prod(Number(0), Number(4)),Number(5)),
 //        Assign("x",Sum(Number(10), Number(2))),
 //        Assign("x", Number(32))))
-      m.run(WhileLoop(Less(Var("x"),Number(16)),
-        Assign("x", Sum(Var("x"), Number(1)))))
+//      m.run(WhileLoop(Less(Var("x"),Sum(Number(16), Number(1))),
+//        Assign("x", Sum(Var("x"), Number(1)))))
+      m.run(Sequence(List(Assign("x",Number(2)), Assign("y", Number(10)))))
 //      println("Final state")
 //      m.printEnv()
 
