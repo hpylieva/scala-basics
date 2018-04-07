@@ -74,3 +74,4 @@ case class Prod(lOp: Expr, rOp: Expr) extends Expr
 case class Less(lOp: Expr, rOp: Expr) extends Expr
 case class IfElse(conditionExpr: Expr, ifExpr: Expr, elseExpr: Expr) extends Expr
 
+case class Empty() extends Expr

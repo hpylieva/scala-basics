@@ -1,6 +1,7 @@
 
 final class Machine(environment:  Map[String, Expr]){
   var env: Map[String, Expr] = environment
+  var cond: Expr = Empty()
 
   def run(expr: Expr): Option[Expr] = {
     println(expr)
@@ -76,8 +77,27 @@ final class Machine(environment:  Map[String, Expr]){
       if (condition.isReducible)
         IfElseStatement(reductionStep(condition), ifSt, elseSt)
       else
-      if (condition.toBool) reductionStep(ifSt)
-      else reductionStep(elseSt)
+        if (condition.toBool) reductionStep(ifSt)
+          else reductionStep(elseSt)
+    }
+
+    case WhileLoop(condition, loopSt) => {
+      if (cond.equals(Empty())){
+        cond = condition
+      }
+//      IfElseStatement(condition, loopSt, DoNothing)
+      if (condition.isReducible) {
+        WhileLoop(reductionStep(condition), loopSt)
+      }
+      else
+        if (condition.toBool) {
+          this.run(loopSt)
+          WhileLoop(cond,loopSt)
+        }
+        else {
+        cond = Empty()
+        DoNothing
+      }
     }
 
 

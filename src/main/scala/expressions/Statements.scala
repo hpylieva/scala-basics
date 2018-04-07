@@ -10,7 +10,7 @@ sealed trait Statement{
       case IfElseStatement(condition, ifStatement, elseStatement) =>
         s"($condition) {\n$ifStatement\n} else {\n$elseStatement\n}"
       case Sequence(seq) => seq.map(s => s.toString).mkString("\n")
-      case WhileLoop(condition, loop) => s"while($condition) do {\n$loop\n}"
+      case WhileLoop(condition, loopSt) => s"while($condition) do {\n$loopSt\n}"
     }
 }
 
@@ -18,5 +18,5 @@ case object DoNothing extends Statement
 case class Assign(varName: String, value: Expr) extends Statement
 case class IfElseStatement(condition: Expr, ifStatement: Statement, elseStatement: Statement) extends Statement
 case class Sequence(seq: List[Statement]) extends Statement
-case class WhileLoop(condition: Expr, loop: Statement) extends Statement
+case class WhileLoop(condition: Expr, loopSt: Statement) extends Statement
 //case class Str(str: String) extends Statement

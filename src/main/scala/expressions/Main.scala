@@ -3,7 +3,7 @@ import scala.collection.mutable
 object Main{
   def main(args: Array[String]): Unit = {
 
-    val runExpressionPart = !false
+    val runExpressionPart = false
     val runStatementPart = true
 
     if (runExpressionPart) {
@@ -36,13 +36,15 @@ object Main{
     if(runStatementPart){
       //  new Machine().run( DoNothing, Map("x" -> Number(1), "y" -> Number(2)))
 
-     val m = new Machine(Map("x" -> Number(1), "y" -> Number(2)))
-      m.run(
-        Assign("x",Prod(Sum(Number(2), Number(1)),Sum(Number(4),Number(3))))
-        )
-      m.run(IfElseStatement(Less(Prod(Number(0), Number(4)),Number(5)),
-        Assign("x",Sum(Number(10), Number(2))),
-        Assign("x", Number(32))))
+     val m = new Machine(Map("x" -> Number(12), "y" -> Number(2)))
+//      m.run(
+//        Assign("x",Prod(Sum(Number(2), Number(1)),Sum(Number(4),Number(3))))
+//        )
+//      m.run(IfElseStatement(Less(Prod(Number(0), Number(4)),Number(5)),
+//        Assign("x",Sum(Number(10), Number(2))),
+//        Assign("x", Number(32))))
+      m.run(WhileLoop(Less(Var("x"),Number(16)),
+        Assign("x", Sum(Var("x"), Number(1)))))
 //      println("Final state")
 //      m.printEnv()
 
