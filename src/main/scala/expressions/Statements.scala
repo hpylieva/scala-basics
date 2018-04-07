@@ -1,10 +1,11 @@
 sealed trait Statement{
-    def doWork(expr: Expr): Expr = this match {
-      case DoNothing => expr
+    def isReducible: Boolean = this match {
+      case DoNothing => false
+      case _ => true
     }
 
     override def toString: String = this match {
-      case DoNothing => s""
+      case DoNothing => s"Nothing changed."
       case Assign(varName, value) => s"$varName = $value"
       case IfElseStatement(condition, ifStatement, elseStatement) =>
         s"($condition) {\n$ifStatement\n} else {\n$elseStatement\n}"
@@ -18,3 +19,4 @@ case class Assign(varName: String, value: Expr) extends Statement
 case class IfElseStatement(condition: Expr, ifStatement: Statement, elseStatement: Statement) extends Statement
 case class Sequence(seq: List[Statement]) extends Statement
 case class WhileLoop(condition: Expr, loop: Statement) extends Statement
+//case class Str(str: String) extends Statement

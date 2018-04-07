@@ -38,7 +38,6 @@ sealed trait Expr {
 
       case IfElse(conditionExpr, ifExpr, elseExpr) =>
         if (conditionExpr.toBool) ifExpr.evaluate else elseExpr.evaluate
-
     }
   }
 
@@ -74,3 +73,4 @@ case class Sum(lOp: Expr, rOp: Expr) extends Expr
 case class Prod(lOp: Expr, rOp: Expr) extends Expr
 case class Less(lOp: Expr, rOp: Expr) extends Expr
 case class IfElse(conditionExpr: Expr, ifExpr: Expr, elseExpr: Expr) extends Expr
+

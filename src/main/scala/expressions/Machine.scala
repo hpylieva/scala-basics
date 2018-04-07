@@ -1,10 +1,13 @@
-final class Machine{
-  def run(expr: Expr, env: Map[String, Expr]): Option[Expr] = {
+
+final class Machine(environment:  Map[String, Expr]){
+  var env: Map[String, Expr] = environment
+
+  def run(expr: Expr): Option[Expr] = {
     println(expr)
 
     if (expr.isReducible) {
       try {
-        run(reductionStep(expr, env), env)
+        run(reductionStep(expr))
       } catch {
         case exception: CustomException => println(exception.msg)
           None
@@ -16,58 +19,70 @@ final class Machine{
       Option(expr)
   }
 
-  def reductionStep(expr: Expr, env: Map[String, Expr]): Expr = {
+  def reductionStep(expr: Expr): Expr = {
 
     def reduceBinaryOperation(applyFunc: (Expr, Expr) => Expr, lOp: Expr, rOp: Expr): Expr = {
-      if (lOp.isReducible) applyFunc(reductionStep(lOp, env), rOp)
-      else if (rOp.isReducible) applyFunc(lOp, reductionStep(rOp, env))
+      if (lOp.isReducible) applyFunc(reductionStep(lOp), rOp)
+      else if (rOp.isReducible) applyFunc(lOp, reductionStep(rOp))
       else expr.evaluate
     }
 
     expr match {
+      case Number(_) | Bool(_) => expr
       case Prod(lOp, rOp) => reduceBinaryOperation(Prod.apply, lOp, rOp)
       case Sum(lOp, rOp) => reduceBinaryOperation(Sum.apply, lOp, rOp)
       case Var(name) => {
-        if (env.contains(name)) env(name)
+        if (env contains name) env(name)
         else throw CustomException("Exception: Var name is not present in Environment.")
       }
 
       case Less(lOp, rOp) => reduceBinaryOperation(Less.apply, lOp, rOp)
 
       case IfElse(conditionExpr, ifExpr, elseExpr) => {
-        if (conditionExpr.isReducible) IfElse(reductionStep(conditionExpr, env), ifExpr, elseExpr)
-        else if (ifExpr.isReducible) reductionStep(ifExpr, env)
-        else reductionStep(elseExpr, env)
+        if (conditionExpr.isReducible)
+          IfElse(reductionStep(conditionExpr), ifExpr, elseExpr)
+        else
+          if (conditionExpr.toBool) reductionStep(ifExpr)
+            else reductionStep(elseExpr)
       }
     }
   }
 
-  def run(statement: Statement, env: Map[String, Any]): Map[String, Any] = {
-    println(s"Environment:\n$env\n\nRunning statement:\n$statement\n")
+  def run(statement: Statement): Option[Statement] = {
+    println(s"Environment: $env\nRunning statement:\n$statement\n")
+    if (statement.isReducible) {
+      try {
+        run(reductionStep(statement))
+      } catch {
+        case exception: CustomException => println(exception.msg)
+          None
+      }
+    }
+    else
+    Option(statement)
+  }
 
-    try {
-      execStatement(statement, env)
-    } catch {
-      case exception: CustomException => env + ("__error" -> exception.msg)
-        //None TODO: add Option
+  def printEnv(): Unit =  println(s"Environment:\n$env")
+
+  private def reductionStep(statement: Statement): Statement = statement match{
+
+    case Assign(name, expr) => {
+      if (expr.isReducible) Assign(name, reductionStep(expr))
+      else
+        env+= name -> expr
+        DoNothing
+    }
+
+    case IfElseStatement(condition,ifSt,elseSt) => {
+      if (condition.isReducible)
+        IfElseStatement(reductionStep(condition), ifSt, elseSt)
+      else
+        if (condition.toBool) reductionStep(ifSt)
+          else reductionStep(elseSt)
     }
 
   }
 
-  def printResult(env: Map[String, Any]): Unit =  println(s"Environment:\n$env")
 
-  def execStatement(statement: Statement, env: Map[String, Any]): Map[String, Any] = statement match{
-    case  DoNothing => env
-    case Assign(varName, expr) =>
-//      if(expr.isReducible) execAssign(varName, reductionStep(expr, env), env)
-//    else
-        execAssign(varName, expr, env)
-    case Sequence(statementsList) => statementsList.foldLeft(env)((env, s) => run(s, env))
-  }
-
-  private def execAssign(name: String, expr: Expr, env: Map[String, Any]):Map[String, Any] = {
-    if(env contains name) env - name + (name -> expr.evaluate)
-    else env + (name -> expr.evaluate)
-  }
 }
 
