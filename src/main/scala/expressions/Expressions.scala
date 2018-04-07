@@ -6,12 +6,14 @@ sealed trait Expr {
 
   def toInt: Int = this match {
     case Number(n) => n
-    case _ => throw CustomException("Exception: Wrong type in "+ this.getClass)
+    case _ => throw CustomException("Exception: Type "+ this.getClass.getName +
+          " is not supported for the expression.")
   }
 
   def toBool: Boolean = this match {
     case Bool(b) => b
-    case _ => throw CustomException("Exception: Wrong type in " + this.getClass)
+    case _ => throw CustomException("Exception: Type "+ this.getClass.getName +
+      " is not supported for the expression.")
   }
 
   def +(that: Expr): Int = this.toInt + that.toInt

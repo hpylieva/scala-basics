@@ -1,4 +1,3 @@
-
 final class Machine(environment:  Map[String, Expr]){
   var env: Map[String, Expr] = environment
   var cond: Expr = Empty()
@@ -49,7 +48,6 @@ final class Machine(environment:  Map[String, Expr]){
   }
 
   def run(statement: Statement): Option[Statement] = {
-//    println(s"Environment: $env\nRunning statement:\n$statement\n")
     println("Environment: { "+env.map{case (k, v) => k + ":" + v}.mkString(" | ")
             + s" }\nRunning statement:\n$statement\n")
 
@@ -65,8 +63,6 @@ final class Machine(environment:  Map[String, Expr]){
     Option(statement)
   }
 
-  def printEnv(): Unit =  println(s"Environment:\n$env")
-
   private def reductionStep(statement: Statement): Statement = statement match{
 
     case Assign(name, expr) => {
@@ -76,6 +72,7 @@ final class Machine(environment:  Map[String, Expr]){
         DoNothing
       }
     }
+
     case IfElseStatement(condition,ifSt,elseSt) => {
       if (condition.isReducible)
         IfElseStatement(reductionStep(condition), ifSt, elseSt)
@@ -109,6 +106,8 @@ final class Machine(environment:  Map[String, Expr]){
       }
       else DoNothing
     }
+
+    case _ => DoNothing
   }
 
 }
