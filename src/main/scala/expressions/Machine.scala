@@ -49,7 +49,10 @@ final class Machine(environment:  Map[String, Expr]){
   }
 
   def run(statement: Statement): Option[Statement] = {
-    println(s"Environment: $env\nRunning statement:\n$statement\n")
+//    println(s"Environment: $env\nRunning statement:\n$statement\n")
+    println("Environment: { "+env.map{case (k, v) => k + ":" + v}.mkString(" | ")
+            + s" }\nRunning statement:\n$statement\n")
+
     if (statement.isReducible) {
       try {
         run(reductionStep(statement))
@@ -106,10 +109,7 @@ final class Machine(environment:  Map[String, Expr]){
       }
       else DoNothing
     }
-
-
   }
-
 
 }
 
