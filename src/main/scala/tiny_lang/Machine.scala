@@ -11,11 +11,11 @@ final class Machine(environment:  Map[String, Expr]){
       } catch {
         case exception: CustomException => println(exception.msg)
           None
-          println()
+//          println()
       }
     }
     else
-      println()
+//      println()
       Option(expr)
   }
 
@@ -65,39 +65,49 @@ final class Machine(environment:  Map[String, Expr]){
     Option(statement)
   }
 
-  private def reductionStep(statement: Statement): Statement = statement match{
+  private def reductionStep(statement: Statement): Statement = statement match {
 
     case Assign(name, expr) => {
-      if (expr.isReducible) Assign(name, reductionStep(expr) )
+      if (expr.isReducible) Assign(name, reductionStep(expr))
       else {
-        env+= name -> expr
+        env += name -> expr
         DoNothing
       }
     }
 
-    case IfElseStatement(condition,ifSt,elseSt) => {
+    case IfElseStatement(condition, ifSt, elseSt) => {
       if (condition.isReducible)
         IfElseStatement(reductionStep(condition), ifSt, elseSt)
-      else
-        if (condition.toBool) reductionStep(ifSt)
-          else reductionStep(elseSt)
+      else if (condition.toBool) reductionStep(ifSt)
+      else reductionStep(elseSt)
     }
 
-    case WhileLoop(condition, loopSt) => {
-      if (cond_holder.equals(Empty())) cond_holder = condition
+    //    case WhileLoop(condition, loopSt) => {
+    //      if (cond_holder.equals(Empty())) cond_holder = condition
+    //
+    //      if (condition.isReducible)
+    //        WhileLoop(reductionStep(condition), loopSt)
+    //      else
+    //        if (condition.toBool) {
+    //          this.run(loopSt)
+    //          WhileLoop(cond_holder,loopSt)
+    //        }
+    //        else {
+    //        cond_holder = Empty()
+    //        DoNothing
+    //        }
+    //  }
 
-      if (condition.isReducible)
-        WhileLoop(reductionStep(condition), loopSt)
-      else
-        if (condition.toBool) {
-          this.run(loopSt)
-          WhileLoop(cond_holder,loopSt)
-        }
-        else {
-        cond_holder = Empty()
-        DoNothing
-        }
-    }
+    case WhileLoop(condition, loopSt) =>
+      val reduced_cond = if (condition.isReducible) {
+        run(condition).getOrElse(Bool(false)).toBool
+      } else condition.toBool
+
+      if (reduced_cond) {
+        run(loopSt)
+        WhileLoop(condition, loopSt)
+      }
+      else DoNothing
 
     case Sequence(list) => {
       if (list.nonEmpty){

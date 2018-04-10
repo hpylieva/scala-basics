@@ -57,10 +57,14 @@ sealed trait Expr {
     }
 
     case Less(lOp, rOp) => {
+      def setParentheses(Op: Expr): String = Op match{
+        case Sum(_,_)|Prod(_,_)|IfElse(_,_,_) => s"($Op)"
+        case _ => s"$Op"
+      }
       val left = if (lOp.isReducible) s"($lOp)" else s"$lOp"
       val right = if (rOp.isReducible) s"($rOp)" else s"$rOp"
 
-      s"$left < $right"
+      setParentheses(lOp) + "<" + setParentheses(rOp)
     }
 
     case IfElse(conditionExpr, ifExpr, elseExpr) => s"if ($conditionExpr) then $ifExpr else $elseExpr"

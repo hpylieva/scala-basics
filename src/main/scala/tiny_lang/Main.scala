@@ -1,4 +1,4 @@
-import scala.collection.mutable
+
 
 object Main{
   def main(args: Array[String]): Unit = {
@@ -37,23 +37,23 @@ object Main{
     if(runStatementPart){
 
      val m = new Machine(Map("x" -> Number(4), "y" -> Number(2)))
-      // simple Assign
-      m.run(Assign("y",Prod(Sum(Number(2), Number(1)),Prod(Number(2),Number(3)))))
-     // IfElse
-      m.run(IfElseStatement(Less(Prod(Number(0), Number(4)),Number(5)),
-        Assign("x",Sum(Number(10), Number(2))),
-        Assign("x", Number(14))))
-      // simple WhileLoop
-      m.run(WhileLoop(Less(Var("y"),Number(12)),
-        Assign("y", Sum(Var("y"), Number(2)))))
-      // sophisticated WhileLoop
+//      // simple Assign
+//      m.run(Assign("y",Prod(Sum(Number(2), Number(1)),Prod(Number(2),Number(3)))))
+//     // IfElse
+//      m.run(IfElseStatement(Less(Prod(Number(0), Number(4)),Number(5)),
+//        Assign("x",Sum(Number(10), Number(2))),
+//        Assign("x", Number(14))))
+//      // simple WhileLoop
+//      m.run(WhileLoop(Less(Var("y"),Number(12)),
+//        Assign("y", Sum(Var("y"), Number(2)))))
+//      // sophisticated WhileLoop
       m.run(WhileLoop(Less(Sum(Var("x"),Number(4)),Prod(Sum(Number(9), Number(11)),Number(1))),
         Assign("x", Sum(Var("x"), Number(1)))))
-      //sequence
-      m.run(Sequence(List(
-        Assign("x",Bool(true)),
-        Assign("y", Number(10)),
-        IfElseStatement(Bool(true), Assign("t",Bool(false)),  Assign("t", Number(14))))))
+//      //sequence
+//      m.run(Sequence(List(
+//        Assign("x",Bool(true)),
+//        Assign("y", Number(10)),
+//        IfElseStatement(Bool(true), Assign("t",Bool(false)),  Assign("t", Number(14))))))
 
     }
 
