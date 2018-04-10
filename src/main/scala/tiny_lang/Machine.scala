@@ -7,24 +7,20 @@ final class Machine(){
       try {
         run(reductionStep(expr, env), env)
       } catch {
-        case exception: CustomException => println(exception.msg)
+        case e: CustomException => println(e.msg)
           None
-          println()
       }
     }
     else
-      println()
       Option(expr)
   }
 
   private def reductionStep(expr: Expr, env:  Map[String, Expr]): Expr = {
-
     def reduceBinaryOperation(applyFunc: (Expr, Expr) => Expr, lOp: Expr, rOp: Expr): Expr = {
       if (lOp.isReducible) applyFunc(reductionStep(lOp, env), rOp)
       else if (rOp.isReducible) applyFunc(lOp, reductionStep(rOp, env))
       else expr.evaluate
     }
-
     expr match {
       case Number(_) | Bool(_) => expr
       case Prod(lOp, rOp) => reduceBinaryOperation(Prod.apply, lOp, rOp)
@@ -45,11 +41,8 @@ final class Machine(){
     }
   }
 
-
   def printEnv(env:Map[String, Expr]): Unit =
     println("Environment: { "+ env.map{case (k, v) => k + ":" + v}.mkString(" | ") + s" }")
-
-
 
   def run(statement: Statement, env: Map[String, Expr]): Map[String, Expr] = {
     println()
@@ -59,12 +52,10 @@ final class Machine(){
     try {
       runStatement(statement, env)
     } catch {
-
       case e: CustomException => {
-        println(e.getMessage)
+        println(e.msg)
         env + ("__error" -> Str(e.getMessage))
       }
-
     }
   }
 
@@ -80,21 +71,16 @@ final class Machine(){
         if(cond.isReducible) ifElseRun(reductionStep(cond, env), ifSt, elseSt, env)
         else ifElseRun(cond, ifSt, elseSt, env)
 
-      case WhileLoop(cond, statement) => {
-        val reduced_cond = if (cond.isReducible) {
-          val ex = run(cond, env).getOrElse(Bool(false))
-            ex.toBool
-        } else cond.toBool
-        print(reduced_cond)
-        printEnv(env)
+      case WhileLoop(condition, statement) => {
+        val reduced_cond = if (condition.isReducible) {
+          println("Reducing loop condition:")
+          run(condition, env).getOrElse(Bool(false)).toBool
+        } else condition.toBool
 
         if (reduced_cond) {
-          run(WhileLoop(cond, statement), run(statement, env))
+          run(WhileLoop(condition, statement), run(statement, env))
         }
-        else {
-          printEnv(env)
-          env
-        }
+        else env
       }
 
       case Sequence(ls) => ls.foldLeft(env)((env, s) => runStatement(s, env))

@@ -1,32 +1,32 @@
-import scala.collection.mutable
+
 
 object Main{
   def main(args: Array[String]): Unit = {
 
-    val runExpressionPart = !true
+    val runExpressionPart = true
     val runStatementPart = true
 
     if (runExpressionPart) {
       //test Less - Exception
       new Machine().run(Less(Var("x"), Number(5)),Map("x" -> Bool(true)))
-
-      //test Less - Exception
+      println()
+      //test Less
       new Machine().run(Less(Sum(Var("x"),
-        Prod(Number(4), Number(2))), Sum(Number(5), Number(3))),
+        Prod(Var("x"), Number(2))), Sum(Number(5), Number(3))),
         Map("x" -> Number(1))
         )
-
+      println()
       //test Prod
       new Machine().run(Prod(Sum(Prod(Number(3), Number(6)),Number(3)),
         Prod(Number(3), Sum(Var("x"), Number(5)))), Map("x" -> Number(1)))
-
+      println()
       //test Sum
       new Machine().run(
         Prod(Sum(Var("x"), Number(2)), Sum(Number(4), Var("y"))),
         Map("x" -> Number(1), "y" -> Number(2)))
-
+      println()
       new Machine().run( Sum(Number(4), Var("y")), Map("y" -> Number(1)))
-
+      println()
       //test IfElse
       new Machine().run(
         IfElse(Less(Sum(Var("x"), Number(4)), Number(1)),
@@ -49,9 +49,10 @@ object Main{
 //                            Assign("x", Number(14))),
 //        Map("x" -> Number(4), "y" -> Number(2)))
       // simple WhileLoop
-      m.run(WhileLoop(Less(Var("y"),Number(12)),
-        Assign("y", Sum(Var("y"), Number(2)))),
-        Map("x" -> Number(4), "y" -> Number(8)))
+      m.run(WhileLoop(
+        Less(Var("x"), Number(7)),
+        Assign("x", Sum(Var("x"), Number(1)))),
+        Map("x" -> Number(4), "y" -> Number(2)))
 //      // sophisticated WhileLoop
 //      m.run(WhileLoop(Less(Sum(Var("x"),Number(4)),Prod(Sum(Number(9), Number(11)),Number(1))),
 //        Assign("x", Sum(Var("x"), Number(1)))),
