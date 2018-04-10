@@ -3,7 +3,7 @@ import scala.collection.mutable
 object Main{
   def main(args: Array[String]): Unit = {
 
-    val runExpressionPart = !false
+    val runExpressionPart = true
     val runStatementPart = true
 
     if (runExpressionPart) {
@@ -22,11 +22,12 @@ object Main{
       //test Sum
       new Machine(Map("x" -> Number(1), "y" -> Number(2))).run(
         Prod(Sum(Var("x"), Number(2)), Sum(Number(4), Var("y"))))
+
       new Machine(
         Map("x" -> Number(1), "y" -> Number(2))).run(
         Sum(Number(4), Var("y")))
-//
-      //test ifelse
+
+      //test IfElse
       new Machine(Map("x" -> Number(1), "y" -> Number(2))).run(
         IfElse(Less(Sum(Var("x"), Number(4)), Number(1)),
           Prod(Number(4), Number(6)), Number(2))
@@ -34,20 +35,25 @@ object Main{
     }
 
     if(runStatementPart){
-      //  new Machine().run( DoNothing, Map("x" -> Number(1), "y" -> Number(2)))
 
-     val m = new Machine(Map("x" -> Number(12), "y" -> Number(2)))
-//      m.run(
-//        Assign("x",Prod(Sum(Number(2), Number(1)),Sum(Number(4),Number(3))))
-//        )
-//      m.run(IfElseStatement(Less(Prod(Number(0), Number(4)),Number(5)),
-//        Assign("x",Sum(Number(10), Number(2))),
-//        Assign("x", Number(32))))
-      m.run(WhileLoop(Less(Var("x"),Sum(Number(16), Number(1))),
+     val m = new Machine(Map("x" -> Number(4), "y" -> Number(2)))
+      // simple Assign
+      m.run(Assign("y",Prod(Sum(Number(2), Number(1)),Prod(Number(2),Number(3)))))
+     // IfElse
+      m.run(IfElseStatement(Less(Prod(Number(0), Number(4)),Number(5)),
+        Assign("x",Sum(Number(10), Number(2))),
+        Assign("x", Number(14))))
+      // simple WhileLoop
+      m.run(WhileLoop(Less(Var("y"),Number(12)),
+        Assign("y", Sum(Var("y"), Number(2)))))
+      // sophisticated WhileLoop
+      m.run(WhileLoop(Less(Sum(Var("x"),Number(4)),Prod(Sum(Number(9), Number(11)),Number(1))),
         Assign("x", Sum(Var("x"), Number(1)))))
-      m.run(Sequence(List(Assign("x",Bool(true)), Assign("y", Number(10)))))
-//      println("Final state")
-//      m.printEnv()
+      //sequence
+      m.run(Sequence(List(
+        Assign("x",Bool(true)),
+        Assign("y", Number(10)),
+        IfElseStatement(Bool(true), Assign("t",Bool(false)),  Assign("t", Number(14))))))
 
     }
 

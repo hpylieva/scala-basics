@@ -1,6 +1,6 @@
 final class Machine(environment:  Map[String, Expr]){
   var env: Map[String, Expr] = environment
-  var cond: Expr = Empty()
+  var cond_holder: Expr = Empty()
 
   def run(expr: Expr): Option[Expr] = {
     println(expr)
@@ -31,10 +31,9 @@ final class Machine(environment:  Map[String, Expr]){
       case Number(_) | Bool(_) => expr
       case Prod(lOp, rOp) => reduceBinaryOperation(Prod.apply, lOp, rOp)
       case Sum(lOp, rOp) => reduceBinaryOperation(Sum.apply, lOp, rOp)
-      case Var(name) => {
+      case Var(name) =>
         if (env contains name) env(name)
         else throw CustomException("Exception: Var name is not present in Environment.")
-      }
 
       case Less(lOp, rOp) => reduceBinaryOperation(Less.apply, lOp, rOp)
 
@@ -42,14 +41,17 @@ final class Machine(environment:  Map[String, Expr]){
         if (conditionExpr.isReducible) IfElse(reductionStep(conditionExpr), ifExpr, elseExpr)
         else
           if (conditionExpr.toBool) reductionStep(ifExpr)
-            else reductionStep(elseExpr)
+          else reductionStep(elseExpr)
       }
+      case _ => throw CustomException("Exception: This Expression is not supported yet.")
     }
   }
 
   def run(statement: Statement): Option[Statement] = {
-    println("Environment: { "+env.map{case (k, v) => k + ":" + v}.mkString(" | ")
-            + s" }\nRunning statement:\n$statement\n")
+    println("\nEnvironment: { "+env.map{case (k, v) => k + ":" + v}.mkString(" | ") + s" }")
+    if (!statement.equals(DoNothing))
+      println("Running statement:")
+    println(statement.toString)
 
     if (statement.isReducible) {
       try {
@@ -82,17 +84,17 @@ final class Machine(environment:  Map[String, Expr]){
     }
 
     case WhileLoop(condition, loopSt) => {
-      if (cond.equals(Empty())) cond = condition
+      if (cond_holder.equals(Empty())) cond_holder = condition
 
       if (condition.isReducible)
         WhileLoop(reductionStep(condition), loopSt)
       else
         if (condition.toBool) {
           this.run(loopSt)
-          WhileLoop(cond,loopSt)
+          WhileLoop(cond_holder,loopSt)
         }
         else {
-        cond = Empty()
+        cond_holder = Empty()
         DoNothing
         }
     }
@@ -107,7 +109,7 @@ final class Machine(environment:  Map[String, Expr]){
       else DoNothing
     }
 
-    case _ => DoNothing
+    case _ => throw CustomException("Exception: This Statement is not supported yet.")
   }
 
 }

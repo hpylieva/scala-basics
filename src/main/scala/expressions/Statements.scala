@@ -5,12 +5,12 @@ sealed trait Statement{
     }
 
     override def toString: String = this match {
-      case DoNothing => s"Nothing will run."
+      case DoNothing => s"-end-"
       case Assign(varName, value) => s"$varName = $value"
       case IfElseStatement(condition, ifStatement, elseStatement) =>
         s"($condition) {\n$ifStatement\n} else {\n$elseStatement\n}"
-      case WhileLoop(condition, loopSt) => s"while($condition) do {\n$loopSt\n}"
-      case Sequence(list) => s"seq:{"+list.map(s => s.toString).mkString(",")  +"}"
+      case WhileLoop(condition, loopSt) => s"while ($condition) do {\n$loopSt\n}"
+      case Sequence(list) => s"Sequence:\n{"+list.map(s => s.toString).mkString(",\n")  +"}"
     }
 }
 
