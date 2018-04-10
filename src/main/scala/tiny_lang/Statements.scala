@@ -1,17 +1,17 @@
-sealed trait Statement{
-    def isReducible: Boolean = this match {
-      case DoNothing => false
-      case _ => true
-    }
+sealed trait Statement {
+  def isReducible: Boolean = this match {
+    case DoNothing => false
+    case _ => true
+  }
 
-    override def toString: String = this match {
-      case DoNothing => s"-end-"
-      case Assign(varName, value) => s"$varName = $value"
-      case IfElseStatement(condition, ifStatement, elseStatement) =>
-        s"($condition) {\n$ifStatement\n} else {\n$elseStatement\n}"
-      case WhileLoop(condition, loopSt) => s"while ($condition) do {\n$loopSt\n}"
-      case Sequence(list) => s"Sequence:\n{"+list.map(s => s.toString).mkString(",\n")  +"}"
-    }
+  override def toString: String = this match {
+    case DoNothing => s"-end-"
+    case Assign(varName, value) => s"$varName = $value"
+    case IfElseStatement(condition, ifStatement, elseStatement) =>
+      s"($condition) {\n$ifStatement\n} else {\n$elseStatement\n}"
+    case WhileLoop(condition, loopSt) => s"while ($condition) do {\n$loopSt\n}"
+    case Sequence(list) => s"Sequence:\n{" + list.map(s => s.toString).mkString(",\n") + "}"
+  }
 }
 
 case object DoNothing extends Statement

@@ -1,6 +1,5 @@
 final class Machine(environment:  Map[String, Expr]){
   var env: Map[String, Expr] = environment
-  var cond_holder: Expr = Empty()
 
   def run(expr: Expr): Option[Expr] = {
     println(expr)
@@ -11,11 +10,9 @@ final class Machine(environment:  Map[String, Expr]){
       } catch {
         case exception: CustomException => println(exception.msg)
           None
-//          println()
       }
     }
     else
-//      println()
       Option(expr)
   }
 
@@ -82,23 +79,7 @@ final class Machine(environment:  Map[String, Expr]){
       else reductionStep(elseSt)
     }
 
-    //    case WhileLoop(condition, loopSt) => {
-    //      if (cond_holder.equals(Empty())) cond_holder = condition
-    //
-    //      if (condition.isReducible)
-    //        WhileLoop(reductionStep(condition), loopSt)
-    //      else
-    //        if (condition.toBool) {
-    //          this.run(loopSt)
-    //          WhileLoop(cond_holder,loopSt)
-    //        }
-    //        else {
-    //        cond_holder = Empty()
-    //        DoNothing
-    //        }
-    //  }
-
-    case WhileLoop(condition, loopSt) =>
+    case WhileLoop(condition, loopSt) => {
       val reduced_cond = if (condition.isReducible) {
         run(condition).getOrElse(Bool(false)).toBool
       } else condition.toBool
@@ -108,6 +89,7 @@ final class Machine(environment:  Map[String, Expr]){
         WhileLoop(condition, loopSt)
       }
       else DoNothing
+    }
 
     case Sequence(list) => {
       if (list.nonEmpty){
