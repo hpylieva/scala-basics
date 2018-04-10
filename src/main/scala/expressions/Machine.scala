@@ -59,7 +59,12 @@ final class Machine(){
     try {
       runStatement(statement, env)
     } catch {
-      case e: CustomException => env + ("__error" -> Str(e.msg))
+
+      case e: CustomException => {
+        println(e.getMessage)
+        env + ("__error" -> Str(e.getMessage))
+      }
+
     }
   }
 
@@ -75,7 +80,22 @@ final class Machine(){
         if(cond.isReducible) ifElseRun(reductionStep(cond, env), ifSt, elseSt, env)
         else ifElseRun(cond, ifSt, elseSt, env)
 
-      case WhileLoop(cond, statement) => whileRun(cond, statement, env)
+      case WhileLoop(cond, statement) => {
+        val reduced_cond = if (cond.isReducible) {
+          val ex = run(cond, env).getOrElse(Bool(false))
+            ex.toBool
+        } else cond.toBool
+        print(reduced_cond)
+        printEnv(env)
+
+        if (reduced_cond) {
+          run(WhileLoop(cond, statement), run(statement, env))
+        }
+        else {
+          printEnv(env)
+          env
+        }
+      }
 
       case Sequence(ls) => ls.foldLeft(env)((env, s) => runStatement(s, env))
     }
@@ -91,22 +111,8 @@ final class Machine(){
 //      else env
 //      case _ => throw new Exception("While loop condition reduced not to Bool type") //TODO: substitute Exception withh CustomException
 //    }
-    val reduced_cond:Boolean = if (cond.isReducible) {
-      run(cond, env).getOrElse(Bool(false)).toBool
-    } else cond.toBool
-    print(reduced_cond)
-    printEnv(env)
+    env
 
-    if (reduced_cond) {
-      run(statement, env)
-      WhileLoop(cond, statement)
-      printEnv(env)
-      env
-    }
-    else {
-      printEnv(env)
-      env
-    }
   }
 
   private def ifElseRun(cond: Expr, ifSt: Statement, elseSt: Statement, env: Map[String, Expr]): Map[String, Expr] = {
