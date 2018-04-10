@@ -1,11 +1,11 @@
 sealed trait Statement{
-    def isReducible: Boolean = this match {
-      case DoNothing => false
-      case _ => true
-    }
+//    def isReducible: Boolean = this match {
+//      case DoNothing => false
+//      case _ => true
+//    }
 
     override def toString: String = this match {
-      case DoNothing => s"-end-"
+      case DoNothing => "-end-"
       case Assign(varName, value) => s"$varName = $value"
       case IfElseStatement(condition, ifStatement, elseStatement) =>
         s"($condition) {\n$ifStatement\n} else {\n$elseStatement\n}"
