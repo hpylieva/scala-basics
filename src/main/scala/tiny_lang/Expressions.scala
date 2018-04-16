@@ -66,7 +66,7 @@ sealed trait Expr {
     }
 
     case IfElse(conditionExpr, ifExpr, elseExpr) => s"if ($conditionExpr) then $ifExpr else $elseExpr"
-    case Str(string) => string
+
   }
 
 }
@@ -80,4 +80,3 @@ case class Less(lOp: Expr, rOp: Expr) extends Expr
 case class IfElse(conditionExpr: Expr, ifExpr: Expr, elseExpr: Expr) extends Expr
 
 case class Empty() extends Expr
-case class Str(string: String) extends Expr

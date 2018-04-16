@@ -1,21 +1,24 @@
 final class Machine(){
 
-  def run(expr: Expr, env:  Map[String, Expr]): Option[Expr] = {
+  def reduce(expr: Expr, env:  Map[String, Any]): Option[Expr] = {
     println(expr)
 
     if (expr.isReducible) {
       try {
-        run(reductionStep(expr, env), env)
+        reduce(reductionStep(expr, env), env)
       } catch {
         case e: CustomException => println(e.msg)
+        //  println()
           None
       }
     }
-    else
+    else {
+    //  println()
       Option(expr)
+    }
   }
 
-  private def reductionStep(expr: Expr, env:  Map[String, Expr]): Expr = {
+  def reductionStep(expr: Expr, env:  Map[String, Any]): Expr = {
     def reduceBinaryOperation(applyFunc: (Expr, Expr) => Expr, lOp: Expr, rOp: Expr): Expr = {
       if (lOp.isReducible) applyFunc(reductionStep(lOp, env), rOp)
       else if (rOp.isReducible) applyFunc(lOp, reductionStep(rOp, env))
@@ -26,8 +29,12 @@ final class Machine(){
       case Prod(lOp, rOp) => reduceBinaryOperation(Prod.apply, lOp, rOp)
       case Sum(lOp, rOp) => reduceBinaryOperation(Sum.apply, lOp, rOp)
       case Var(name) =>
-        if (env contains name) env(name)
-        else throw CustomException("Exception: Var name is not present in Environment.")
+        if (env contains name) env(name) match{
+          case i:Int => Number(i)
+          case b:Boolean => Bool(b)
+          case _ => throw CustomException(s"Exception: Value type ${env(name).getClass()} is not supported.")
+        }
+        else throw CustomException(s"Exception: Variable $name is not defined in the environment.")
 
       case Less(lOp, rOp) => reduceBinaryOperation(Less.apply, lOp, rOp)
 
@@ -41,10 +48,10 @@ final class Machine(){
     }
   }
 
-  def printEnv(env:Map[String, Expr]): Unit =
+  def printEnv(env:Map[String, Any]): Unit =
     println("Environment: { "+ env.map{case (k, v) => k + ":" + v}.mkString(" | ") + s" }")
 
-  def run(statement: Statement, env: Map[String, Expr]): Map[String, Expr] = {
+  def run(statement: Stat, env: Map[String, Any]): Map[String, Any] = {
     println()
     printEnv(env)
     println("Running statement:\n"+statement)
@@ -54,12 +61,12 @@ final class Machine(){
     } catch {
       case e: CustomException => {
         println(e.msg)
-        env + ("__error" -> Str(e.getMessage))
+        env + ("__error" -> e.getMessage)
       }
     }
   }
 
-  private def runStatement(statement: Statement, env: Map[String, Expr]): Map[String, Expr] = {
+  private def runStatement(statement: Stat, env: Map[String, Any]): Map[String, Any] = {
     statement match {
       case DoNothing => env
 
@@ -67,52 +74,40 @@ final class Machine(){
         if(expr.isReducible) assignRun(name, reductionStep(expr, env), env)
         else assignRun(name, expr, env)
 
-      case IfElseStatement(cond, ifSt, elseSt) =>
+      case IfElseStat(cond, ifSt, elseSt) =>
         if(cond.isReducible) ifElseRun(reductionStep(cond, env), ifSt, elseSt, env)
         else ifElseRun(cond, ifSt, elseSt, env)
 
-      case WhileLoop(condition, statement) => {
-        val reduced_cond = if (condition.isReducible) {
-          println("Reducing loop condition:")
-          run(condition, env).getOrElse(Bool(false)).toBool
-        } else condition.toBool
-
-        if (reduced_cond) {
-          run(WhileLoop(condition, statement), run(statement, env))
-        }
+      case While(condition, statement) =>  reduce(condition, env) match {
+        case Some(Bool(b))=>
+        if (b) runStatement(While(condition, statement), runStatement(statement, env))
         else env
+        case _ => throw CustomException("While loop condition reduced not to Bool type")
       }
 
       case Sequence(ls) => ls.foldLeft(env)((env, s) => runStatement(s, env))
     }
   }
 
-  private def whileRun(cond: Expr, statement: Statement, env: Map[String, Expr]):Map[String, Expr] = {
-//doesn't work
-
-    //    val reduced_condition = reductionStep(cond, env)
-//    print(reduced_condition)
-//    reduced_condition match {
-//      case Bool(b) => if (b) runStatement (WhileLoop (cond, statement), runStatement (statement, env) )
-//      else env
-//      case _ => throw new Exception("While loop condition reduced not to Bool type") //TODO: substitute Exception withh CustomException
-//    }
-    env
-
-  }
-
-  private def ifElseRun(cond: Expr, ifSt: Statement, elseSt: Statement, env: Map[String, Expr]): Map[String, Expr] = {
+  private def ifElseRun(cond: Expr, ifSt: Stat, elseSt: Stat, env: Map[String, Any]): Map[String, Any] = {
     if(cond.isReducible) ifElseRun(reductionStep(cond, env), ifSt, elseSt, env)
     else
       if (cond.toBool) runStatement(ifSt, env)
       else runStatement(elseSt, env)
   }
 
-  private def assignRun(name: String, expr: Expr, env: Map[String, Expr]):Map[String, Expr] = {
+  private def assignRun(name: String, expr: Expr, env: Map[String, Any]):Map[String, Any] = {
     if(expr.isReducible) assignRun(name, reductionStep(expr, env), env)
     else {
-      printEnv(env + (name -> expr))
-      env + (name -> expr)
+
+      val value = expr match {
+        case Bool(b) => b
+        case Number(i) => i
+        case _ => throw CustomException(s"Trying to assing not reduced expression $expr to variable $name")
+      }
+
+      printEnv(env + (name -> value))
+      env + (name -> value)
     }
   }
 
