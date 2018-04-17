@@ -2,7 +2,7 @@
 object Main{
   def main(args: Array[String]): Unit = {
 
-    val runExpressionPart = !true
+    val runExpressionPart = true
     val runStatementPart = true
 
     val machine = new Machine
@@ -16,6 +16,7 @@ object Main{
       machine.run(stat, env)
 
     if (runExpressionPart) {
+      println("-------------Running EXPRESSION part-------------")
       reduce(Number(5))
       reduce(Var("b"))
       reduce(Var("unknown"))
@@ -78,6 +79,7 @@ object Main{
     }
 
     if(runStatementPart){
+      println("-------------Running STATEMENT part-------------")
       // DoNothing
       //      test("DoNothing does not alter environment")
       run(DoNothing)
