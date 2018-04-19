@@ -2,7 +2,7 @@
 object Main{
   def main(args: Array[String]): Unit = {
 
-    val runExpressionPart = true
+    val runExpressionPart = !true
     val runStatementPart = true
 
     val machine = new Machine
@@ -10,7 +10,7 @@ object Main{
 
     def reductionStep(expr: Expr): Expr =
       machine.reductionStep(expr, env)
-    def reduce(expr: Expr): Option[Expr] =
+    def reduce(expr: Expr): Expr =
       machine.reduce(expr, env)
     def run(stat: Stat): Map[String, Any] =
       machine.run(stat, env)
@@ -79,6 +79,7 @@ object Main{
     }
 
     if(runStatementPart){
+      /*
       println("-------------Running STATEMENT part-------------")
       // DoNothing
       //      test("DoNothing does not alter environment")
@@ -112,15 +113,19 @@ object Main{
       run(Sequence(List(Assign("t",Bool(true)))))
       //      test("'Seq' executes its statements one by one")
       run(Sequence(List(
-                Assign("x",Bool(true)),
+                Assign("v1",Bool(true)),
                 Assign("y", Number(10)),
                 IfElseStat(Bool(true), Assign("t",Bool(false)),  Assign("t", Number(14))))))
       //      test("'Seq' does not execute remained statements after first failure")
+      */
+      val b =
       run(Sequence(List(
-        Assign("x",Bool(true)),
-        Assign("z", Var("t")),
-        IfElseStat(Bool(true), Assign("t",Bool(false)),  Assign("t", Number(14))))))
-
+        Assign("b1",Bool(true)),
+        Assign("x", Var("t")),
+        Assign("t", Number(14)))))
+      //==Map("x" -> 3, "y" -> 5, "b" ->true, "v1" -> true, "__error" -> "Exception: Variable t is not defined in the environment.")
+        println(b)
+      /*
       // While
       //      test("'While' executes thenStat multiple times while condition reduces to Bool(true)")
       run(While(
@@ -141,7 +146,7 @@ object Main{
 //      run(While(Less(Sum(Var("x"),Number(4)),Prod(Sum(Number(9), Number(11)),Number(1))),
 //        Assign("x", Sum(Var("x"), Number(1)))))
 
-
+*/
     }
 
   }

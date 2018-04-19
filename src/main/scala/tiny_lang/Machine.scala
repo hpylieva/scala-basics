@@ -1,20 +1,17 @@
 final class Machine(){
 
-  def reduce(expr: Expr, env:  Map[String, Any]): Option[Expr] = {
+  def reduce(expr: Expr, env:  Map[String, Any]): Expr = {
     println(expr)
 
     if (expr.isReducible) {
       try {
         reduce(reductionStep(expr, env), env)
       } catch {
-        case e: CustomException => println(e.msg)
-        //  println()
-          None
+        case e: CustomException => expr
       }
     }
     else {
-    //  println()
-      Option(expr)
+      expr
     }
   }
 
@@ -61,7 +58,7 @@ final class Machine(){
     } catch {
       case e: CustomException => {
         println(e.msg)
-        env + ("__error" -> e.getMessage)
+        env + ("__error" -> e.msg)
       }
     }
   }
@@ -79,13 +76,16 @@ final class Machine(){
         else ifElseRun(cond, ifSt, elseSt, env)
 
       case While(condition, statement) =>  reduce(condition, env) match {
-        case Some(Bool(b))=>
+        case Bool(b)=>
         if (b) runStatement(While(condition, statement), runStatement(statement, env))
         else env
         case _ => throw CustomException("While loop condition reduced not to Bool type")
       }
 
-      case Sequence(ls) => ls.foldLeft(env)((env, s) => runStatement(s, env))
+      case Sequence(ls) => ls match {
+        case Nil => env
+        case h::tail => run(Sequence(tail), runStatement(h,env))
+      }
     }
   }
 
@@ -103,7 +103,7 @@ final class Machine(){
       val value = expr match {
         case Bool(b) => b
         case Number(i) => i
-        case _ => throw CustomException(s"Trying to assing not reduced expression $expr to variable $name")
+        case _ => throw CustomException(s"Trying to assign not reduced expression $expr to variable $name")
       }
 
       printEnv(env + (name -> value))
