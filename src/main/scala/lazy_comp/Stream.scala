@@ -28,10 +28,37 @@ sealed trait Stream[+A]{
 
   def drop(n: Int): Stream[A] = this match{
     case Cons(h, t) if n > 1 => t().drop(n  -  1)
-    case Cons(h, t ) if n == 1 => t()
+    case Cons(h, t) if n == 1 => t()
     case _ => empty
   }
 
+  def exists(p: A => Boolean): Boolean = this match {
+    case Cons(h, t) => p(h()) || t().exists(p)
+    case _ => false
+  }
+
+  def forAll(p: A => Boolean): Boolean = this match{
+    case Cons(h, t) if !p(h()) => false
+    case Cons(h, t) => p(h()) && t().forAll(p)
+    case _ => true
+  }
+
+  def foldRight[B](z: =>B)(f: (A, =>B) => B): B = this match {
+    case Cons(h, t) => f(h(), t().foldRight(z)(f))
+    case _ => z
+  }
+
+  def map[B](f: A => B): Stream[B] = this match {
+    case Cons(h, t) => cons(f(h()), t().map(f))
+    case _ => empty
+  }
+
+  def filter(p: A => Boolean): Stream[A] = this match {
+    case Cons(h, t) if p(h()) => cons(h(), t().filter(p))
+    case Cons(h, t ) if !p(h()) => t().filter(p)
+    case _ => empty
+  }
+ // def filter
 
 }
 case object Empty extends Stream[Nothing]
@@ -48,6 +75,5 @@ object Stream {
     if (args.isEmpty) empty
     else cons(args.head, apply(args.tail: _*))
 
-
-
+  def from(n: Int): Stream[Int] =  cons(n, from(n+1))
 }

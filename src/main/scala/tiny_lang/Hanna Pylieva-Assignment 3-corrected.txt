@@ -1,0 +1,223 @@
+// --------------------------CUSTOM EXCEPTION--------------------------
+case class CustomException(msg: String) extends Exception
+
+
+// ---------------------------------------EXPRESSIONS---------------------------------------
+
+sealed trait Expr {
+  def isReducible: Boolean = this match {
+    case Number(_) | Bool(_) => false
+    case _ => true
+  }
+
+  def toInt: Int = this match {
+    case Number(n) => n
+    case _ => throw CustomException("Exception: Type "+ this.getClass.getName +
+          " is not supported for the expression.")
+  }
+
+  def toBool: Boolean = this match {
+    case Bool(b) => b
+    case _ => throw CustomException("Exception: Type "+ this.getClass.getName +
+      " is not supported for the expression.")
+  }
+
+  def +(that: Expr): Int = this.toInt + that.toInt
+  def *(that: Expr): Int = this.toInt * that.toInt
+  def <(that: Expr): Boolean = this.toInt < that.toInt
+
+  def evaluate: Expr = {
+    def evaluateOperand(Operand: Expr): Expr = Operand match{
+      case Number(_) | Bool(_) => Operand
+      case _ => Operand.evaluate
+    }
+
+    this match {
+      case Number(n) => Number(n)
+      case Bool(b) => Bool(b)
+      case Sum(lOp, rOp) =>
+        Number(evaluateOperand(lOp) + evaluateOperand(rOp))
+
+      case Prod(lOp, rOp) =>
+        Number(evaluateOperand(lOp) * evaluateOperand(rOp))
+
+      case Less(lOp, rOp) =>
+        Bool(evaluateOperand(lOp) < evaluateOperand(rOp))
+
+      case IfElse(conditionExpr, ifExpr, elseExpr) =>
+        if (conditionExpr.toBool) ifExpr.evaluate else elseExpr.evaluate
+    }
+  }
+
+  override def toString: String = this match {
+    case Number(n) => n.toString
+    case Bool(b) => b.toString
+    case Var(name) => name
+    case Sum(lOp, rOp) => s"$lOp + $rOp"
+    case Prod(lOp, rOp) => {
+      def setParentheses(Op: Expr): String = Op match {
+        case Sum(_, _) => s"($Op)"
+        case _ => s"$Op"
+      }
+      setParentheses(lOp) + "*" + setParentheses(rOp)
+    }
+
+    case Less(lOp, rOp) => {
+      def setParentheses(Op: Expr): String = Op match{
+        case Sum(_,_)|Prod(_,_)|IfElse(_,_,_) => s"($Op)"
+        case _ => s"$Op"
+      }
+
+      setParentheses(lOp) + " < " + setParentheses(rOp)
+    }
+
+    case IfElse(conditionExpr, ifExpr, elseExpr) => s"if ($conditionExpr) then $ifExpr else $elseExpr"
+
+  }
+
+}
+
+case class Number(n: Int) extends Expr
+case class Bool(b: Boolean) extends Expr
+case class Var(name: String) extends Expr
+case class Sum(lOp: Expr, rOp: Expr) extends Expr
+case class Prod(lOp: Expr, rOp: Expr) extends Expr
+case class Less(lOp: Expr, rOp: Expr) extends Expr
+case class IfElse(conditionExpr: Expr, ifExpr: Expr, elseExpr: Expr) extends Expr
+
+// ---------------------------------------STATEMENTS---------------------------------------
+sealed trait Stat{
+
+    override def toString: String = this match {
+      case DoNothing => "-end-"
+      case Assign(varName, value) => s"$varName = $value"
+      case IfElseStat(condition, ifStatement, elseStatement) =>
+        s"($condition) {\n$ifStatement\n} else {\n$elseStatement\n}"
+      case While(condition, loopSt) => s"while ($condition) do {\n$loopSt\n}"
+      case Sequence(list) => s"Sequence:\n{"+list.map(s => s.toString).mkString(",\n")  +"}"
+    }
+}
+
+case object DoNothing extends Stat
+case class Assign(varName: String, value: Expr) extends Stat
+case class IfElseStat(condition: Expr, ifStatement: Stat, elseStatement: Stat) extends Stat
+case class While(condition: Expr, loopSt: Stat) extends Stat
+case class Sequence(list: List[Stat]) extends Stat
+
+// ---------------------------------------MACHINE---------------------------------------
+final class Machine(){
+
+  def reduce(expr: Expr, env:  Map[String, Any]): Expr = {
+    println(expr)
+
+    if (expr.isReducible) {
+      try {
+        reduce(reductionStep(expr, env), env)
+      } catch {
+        case e: CustomException => expr
+      }
+    }
+    else {
+      expr
+    }
+  }
+
+  def reductionStep(expr: Expr, env:  Map[String, Any]): Expr = {
+    def reduceBinaryOperation(applyFunc: (Expr, Expr) => Expr, lOp: Expr, rOp: Expr): Expr = {
+      if (lOp.isReducible) applyFunc(reductionStep(lOp, env), rOp)
+      else if (rOp.isReducible) applyFunc(lOp, reductionStep(rOp, env))
+      else expr.evaluate
+    }
+    expr match {
+      case Number(_) | Bool(_) => expr
+      case Prod(lOp, rOp) => reduceBinaryOperation(Prod.apply, lOp, rOp)
+      case Sum(lOp, rOp) => reduceBinaryOperation(Sum.apply, lOp, rOp)
+      case Var(name) =>
+        if (env contains name) env(name) match{
+          case i:Int => Number(i)
+          case b:Boolean => Bool(b)
+          case _ => throw CustomException(s"Exception: Value type ${env(name).getClass()} is not supported.")
+        }
+        else throw CustomException(s"Exception: Variable $name is not defined in the environment.")
+
+      case Less(lOp, rOp) => reduceBinaryOperation(Less.apply, lOp, rOp)
+
+      case IfElse(conditionExpr, ifExpr, elseExpr) => {
+        if (conditionExpr.isReducible) IfElse(reductionStep(conditionExpr, env), ifExpr, elseExpr)
+        else
+          if (conditionExpr.toBool) reductionStep(ifExpr, env)
+          else reductionStep(elseExpr, env)
+      }
+      case _ => throw CustomException("Exception: This Expression is not supported yet.")
+    }
+  }
+
+  def printEnv(env:Map[String, Any]): Unit =
+    println("Environment: { "+ env.map{case (k, v) => k + ":" + v}.mkString(" | ") + s" }")
+
+  def run(statement: Stat, env: Map[String, Any]): Map[String, Any] = {
+    println()
+    printEnv(env)
+    println("Running statement:\n"+statement)
+
+    try {
+      runStatement(statement, env)
+    } catch {
+      case e: CustomException => {
+        println(e.msg)
+        env + ("__error" -> e.msg)
+      }
+    }
+  }
+
+  private def runStatement(statement: Stat, env: Map[String, Any]): Map[String, Any] = {
+    statement match {
+      case DoNothing => env
+
+      case Assign(name, expr) =>
+        if(expr.isReducible) assignRun(name, reductionStep(expr, env), env)
+        else assignRun(name, expr, env)
+
+      case IfElseStat(cond, ifSt, elseSt) =>
+        if(cond.isReducible) ifElseRun(reductionStep(cond, env), ifSt, elseSt, env)
+        else ifElseRun(cond, ifSt, elseSt, env)
+
+      case While(condition, statement) =>  reduce(condition, env) match {
+        case Bool(b)=>
+        if (b) runStatement(While(condition, statement), runStatement(statement, env))
+        else env
+        case _ => throw CustomException("While loop condition reduced not to Bool type")
+      }
+
+      case Sequence(ls) => ls match {
+        case Nil => env
+        case h::tail => run(Sequence(tail), runStatement(h,env))
+      }
+    }
+  }
+
+  private def ifElseRun(cond: Expr, ifSt: Stat, elseSt: Stat, env: Map[String, Any]): Map[String, Any] = {
+    if(cond.isReducible) ifElseRun(reductionStep(cond, env), ifSt, elseSt, env)
+    else
+      if (cond.toBool) runStatement(ifSt, env)
+      else runStatement(elseSt, env)
+  }
+
+  private def assignRun(name: String, expr: Expr, env: Map[String, Any]):Map[String, Any] = {
+    if(expr.isReducible) assignRun(name, reductionStep(expr, env), env)
+    else {
+
+      val value = expr match {
+        case Bool(b) => b
+        case Number(i) => i
+        case _ => throw CustomException(s"Trying to assign not reduced expression $expr to variable $name")
+      }
+
+      printEnv(env + (name -> value))
+      env + (name -> value)
+    }
+  }
+
+}
+
+

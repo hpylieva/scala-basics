@@ -21,31 +21,8 @@
 [debug] dependency descriptor has been mediated: MergedDescriptors(dependency: org.scala-lang#scala-library;2.12.4 {scala-tool=[default, optional(default)]},dependency: org.scala-lang#scala-library;2.12.4 {provided=[default(compile)]}) => dependency: org.scala-lang#scala-library;2.12.4 {scala-tool=[default, optional(default)], provided=[default(compile)]}
 [info] Resolving org.scalatest#scalatest_2.12;3.0.1 ...
 [debug] sbt-chain: Checking cache for: dependency: org.scalatest#scalatest_2.12;3.0.1 {test=[default(compile)]}
-[info] Resolving org.scalatest#scalatest_2.12;3.0.1 ...
-[debug] sbt-chain-delegate: Checking cache for: dependency: org.scalatest#scalatest_2.12;3.0.1 {test=[default(compile)]}
-[debug] 		tried https://repo.typesafe.com/typesafe/ivy-releases/org.scalatest/scalatest_2.12/3.0.1/ivys/ivy.xml
-[debug] CLIENT ERROR: Not Found url=https://repo.typesafe.com/typesafe/ivy-releases/org.scalatest/scalatest_2.12/3.0.1/ivys/ivy.xml
-[debug] 	typesafe-ivy-releases: no ivy file found for org.scalatest#scalatest_2.12;3.0.1
-[debug] 		tried https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/org.scalatest/scalatest_2.12/3.0.1/ivys/ivy.xml
-[debug] CLIENT ERROR: Not Found url=https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/org.scalatest/scalatest_2.12/3.0.1/ivys/ivy.xml
-[debug] 	sbt-plugin-releases: no ivy file found for org.scalatest#scalatest_2.12;3.0.1
-[debug] 		tried C:\Users\pylye\.ivy2\local\org.scalatest\scalatest_2.12\3.0.1\ivys\ivy.xml
-[debug] 	local: no ivy file found for org.scalatest#scalatest_2.12;3.0.1
-[debug] 		tried https://repo1.maven.org/maven2/org/scalatest/scalatest_2.12/3.0.1/scalatest_2.12-3.0.1.pom
-[debug] 	public: found md file for org.scalatest#scalatest_2.12;3.0.1
-[debug] 		=> https://repo1.maven.org/maven2/org/scalatest/scalatest_2.12/3.0.1/scalatest_2.12-3.0.1.pom (3.0.1)
-[debug] downloading https://repo1.maven.org/maven2/org/scalatest/scalatest_2.12/3.0.1/scalatest_2.12-3.0.1.pom ...
-[debug] 	public: downloading https://repo1.maven.org/maven2/org/scalatest/scalatest_2.12/3.0.1/scalatest_2.12-3.0.1.pom
-[debug] 	public: downloading https://repo1.maven.org/maven2/org/scalatest/scalatest_2.12/3.0.1/scalatest_2.12-3.0.1.pom.sha1
-[debug] sha1 OK for https://repo1.maven.org/maven2/org/scalatest/scalatest_2.12/3.0.1/scalatest_2.12-3.0.1.pom
-[debug] 	[SUCCESSFUL ] org.scalatest#scalatest_2.12;3.0.1!scalatest_2.12.pom(pom.original) (308ms)
-[debug] 		tried https://repo.typesafe.com/typesafe/ivy-releases/org.scalatest/scalatest_2.12/3.0.1/bundles/scalatest_2.12.jar
-[debug] CLIENT ERROR: Not Found url=https://repo.typesafe.com/typesafe/ivy-releases/org.scalatest/scalatest_2.12/3.0.1/bundles/scalatest_2.12.jar
-[debug] 		tried https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/org.scalatest/scalatest_2.12/3.0.1/bundles/scalatest_2.12.jar
-[debug] CLIENT ERROR: Not Found url=https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/org.scalatest/scalatest_2.12/3.0.1/bundles/scalatest_2.12.jar
-[debug] 		tried C:\Users\pylye\.ivy2\local\org.scalatest\scalatest_2.12\3.0.1\bundles\scalatest_2.12.jar
-[debug] 		tried https://repo1.maven.org/maven2/org/scalatest/scalatest_2.12/3.0.1/scalatest_2.12-3.0.1.jar
-[debug] 	found org.scalatest#scalatest_2.12;3.0.1 in public
+[debug] sbt-chain: module revision found in cache: org.scalatest#scalatest_2.12;3.0.1
+[debug] 	found org.scalatest#scalatest_2.12;3.0.1 in sbt-chain
 [debug] == resolving dependencies scala-basics#scala-basics;0.1->org.scalatest#scalatest_2.12;3.0.1 [test->runtime]
 [debug] == resolving dependencies scala-basics#scala-basics;0.1->org.scalatest#scalatest_2.12;3.0.1 [test->compile]
 [debug] dependency descriptor has been mediated: dependency: org.scala-lang#scala-compiler;2.12.0 {provided=[compile(*), provided(*), runtime(*), master(compile)]} => dependency: org.scala-lang#scala-compiler;2.12.4 {provided=[compile(*), provided(*), runtime(*), master(compile)]}
@@ -105,31 +82,8 @@
 [debug] dependency descriptor has been mediated: MergedDescriptors(dependency: org.scala-lang#scala-library;2.12.4 {scala-tool=[default, optional(default)]},dependency: org.scala-lang#scala-library;2.12.4 {provided=[default(compile)]}) => dependency: org.scala-lang#scala-library;2.12.4 {scala-tool=[default, optional(default)], provided=[default(compile)]}
 [info] Resolving org.scalactic#scalactic_2.12;3.0.1 ...
 [debug] sbt-chain: Checking cache for: dependency: org.scalactic#scalactic_2.12;3.0.1 {compile=[compile(*), master(compile)], runtime=[runtime(*)]}
-[info] Resolving org.scalactic#scalactic_2.12;3.0.1 ...
-[debug] sbt-chain-delegate: Checking cache for: dependency: org.scalactic#scalactic_2.12;3.0.1 {compile=[compile(*), master(compile)], runtime=[runtime(*)]}
-[debug] 		tried https://repo.typesafe.com/typesafe/ivy-releases/org.scalactic/scalactic_2.12/3.0.1/ivys/ivy.xml
-[debug] CLIENT ERROR: Not Found url=https://repo.typesafe.com/typesafe/ivy-releases/org.scalactic/scalactic_2.12/3.0.1/ivys/ivy.xml
-[debug] 	typesafe-ivy-releases: no ivy file found for org.scalactic#scalactic_2.12;3.0.1
-[debug] 		tried https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/org.scalactic/scalactic_2.12/3.0.1/ivys/ivy.xml
-[debug] CLIENT ERROR: Not Found url=https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/org.scalactic/scalactic_2.12/3.0.1/ivys/ivy.xml
-[debug] 	sbt-plugin-releases: no ivy file found for org.scalactic#scalactic_2.12;3.0.1
-[debug] 		tried C:\Users\pylye\.ivy2\local\org.scalactic\scalactic_2.12\3.0.1\ivys\ivy.xml
-[debug] 	local: no ivy file found for org.scalactic#scalactic_2.12;3.0.1
-[debug] 		tried https://repo1.maven.org/maven2/org/scalactic/scalactic_2.12/3.0.1/scalactic_2.12-3.0.1.pom
-[debug] 	public: found md file for org.scalactic#scalactic_2.12;3.0.1
-[debug] 		=> https://repo1.maven.org/maven2/org/scalactic/scalactic_2.12/3.0.1/scalactic_2.12-3.0.1.pom (3.0.1)
-[debug] downloading https://repo1.maven.org/maven2/org/scalactic/scalactic_2.12/3.0.1/scalactic_2.12-3.0.1.pom ...
-[debug] 	public: downloading https://repo1.maven.org/maven2/org/scalactic/scalactic_2.12/3.0.1/scalactic_2.12-3.0.1.pom
-[debug] 	public: downloading https://repo1.maven.org/maven2/org/scalactic/scalactic_2.12/3.0.1/scalactic_2.12-3.0.1.pom.sha1
-[debug] sha1 OK for https://repo1.maven.org/maven2/org/scalactic/scalactic_2.12/3.0.1/scalactic_2.12-3.0.1.pom
-[debug] 	[SUCCESSFUL ] org.scalactic#scalactic_2.12;3.0.1!scalactic_2.12.pom(pom.original) (266ms)
-[debug] 		tried https://repo.typesafe.com/typesafe/ivy-releases/org.scalactic/scalactic_2.12/3.0.1/bundles/scalactic_2.12.jar
-[debug] CLIENT ERROR: Not Found url=https://repo.typesafe.com/typesafe/ivy-releases/org.scalactic/scalactic_2.12/3.0.1/bundles/scalactic_2.12.jar
-[debug] 		tried https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/org.scalactic/scalactic_2.12/3.0.1/bundles/scalactic_2.12.jar
-[debug] CLIENT ERROR: Not Found url=https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/org.scalactic/scalactic_2.12/3.0.1/bundles/scalactic_2.12.jar
-[debug] 		tried C:\Users\pylye\.ivy2\local\org.scalactic\scalactic_2.12\3.0.1\bundles\scalactic_2.12.jar
-[debug] 		tried https://repo1.maven.org/maven2/org/scalactic/scalactic_2.12/3.0.1/scalactic_2.12-3.0.1.jar
-[debug] 	found org.scalactic#scalactic_2.12;3.0.1 in public
+[debug] sbt-chain: module revision found in cache: org.scalactic#scalactic_2.12;3.0.1
+[debug] 	found org.scalactic#scalactic_2.12;3.0.1 in sbt-chain
 [debug] dependency descriptor has been mediated: dependency: org.scala-lang#scala-compiler;2.12.0 {provided=[compile(*), provided(*), runtime(*), master(compile)]} => dependency: org.scala-lang#scala-compiler;2.12.4 {provided=[compile(*), provided(*), runtime(*), master(compile)]}
 [debug] dependency descriptor has been mediated: dependency: org.scala-lang#scala-library;2.12.0 {compile=[compile(*), master(compile)], runtime=[runtime(*)]} => dependency: org.scala-lang#scala-library;2.12.4 {compile=[compile(*), master(compile)], runtime=[runtime(*)]}
 [debug] dependency descriptor has been mediated: dependency: org.scala-lang#scala-reflect;2.12.0 {compile=[compile(*), master(compile)], runtime=[runtime(*)]} => dependency: org.scala-lang#scala-reflect;2.12.4 {compile=[compile(*), master(compile)], runtime=[runtime(*)]}
@@ -6600,19 +6554,9 @@
 [debug] ignoring unhandled DependencyDescriptorMediator: class sbt.IvyScala$OverrideScalaMediator
 [debug] 	resolved ivy file produced in cache
 [debug] :: downloading artifacts ::
-[debug] 		tried https://repo1.maven.org/maven2/org/scalatest/scalatest_2.12/3.0.1/scalatest_2.12-3.0.1.jar
-[info] downloading https://repo1.maven.org/maven2/org/scalatest/scalatest_2.12/3.0.1/scalatest_2.12-3.0.1.jar ...
-[debug] 	public: downloading https://repo1.maven.org/maven2/org/scalatest/scalatest_2.12/3.0.1/scalatest_2.12-3.0.1.jar
-[debug] 	public: downloading https://repo1.maven.org/maven2/org/scalatest/scalatest_2.12/3.0.1/scalatest_2.12-3.0.1.jar.sha1
-[debug] sha1 OK for https://repo1.maven.org/maven2/org/scalatest/scalatest_2.12/3.0.1/scalatest_2.12-3.0.1.jar
-[info] 	[SUCCESSFUL ] org.scalatest#scalatest_2.12;3.0.1!scalatest_2.12.jar(bundle) (1570ms)
+[debug] 	[NOT REQUIRED] org.scalatest#scalatest_2.12;3.0.1!scalatest_2.12.jar(bundle)
 [debug] 	[NOT REQUIRED] org.scala-lang#scala-library;2.12.4!scala-library.jar
-[debug] 		tried https://repo1.maven.org/maven2/org/scalactic/scalactic_2.12/3.0.1/scalactic_2.12-3.0.1.jar
-[info] downloading https://repo1.maven.org/maven2/org/scalactic/scalactic_2.12/3.0.1/scalactic_2.12-3.0.1.jar ...
-[debug] 	public: downloading https://repo1.maven.org/maven2/org/scalactic/scalactic_2.12/3.0.1/scalactic_2.12-3.0.1.jar
-[debug] 	public: downloading https://repo1.maven.org/maven2/org/scalactic/scalactic_2.12/3.0.1/scalactic_2.12-3.0.1.jar.sha1
-[debug] sha1 OK for https://repo1.maven.org/maven2/org/scalactic/scalactic_2.12/3.0.1/scalactic_2.12-3.0.1.jar
-[info] 	[SUCCESSFUL ] org.scalactic#scalactic_2.12;3.0.1!scalactic_2.12.jar(bundle) (369ms)
+[debug] 	[NOT REQUIRED] org.scalactic#scalactic_2.12;3.0.1!scalactic_2.12.jar(bundle)
 [debug] 	[NOT REQUIRED] org.scala-lang#scala-reflect;2.12.4!scala-reflect.jar
 [debug] 	[NOT REQUIRED] org.scala-lang.modules#scala-xml_2.12;1.0.5!scala-xml_2.12.jar(bundle)
 [debug] 	[NOT REQUIRED] org.scala-lang.modules#scala-parser-combinators_2.12;1.0.4!scala-parser-combinators_2.12.jar(bundle)
@@ -6667,7 +6611,7 @@
 [debug] 	[NOT REQUIRED] org.scala-sbt#apply-macro;0.13.16!apply-macro.jar
 [debug] 	[NOT REQUIRED] org.scala-sbt#template-resolver;0.1!template-resolver.jar
 [debug] 	[NOT REQUIRED] jline#jline;2.14.5!jline.jar
-[debug] :: resolution report :: resolve 11740ms :: artifacts dl 2008ms
+[debug] :: resolution report :: resolve 3676ms :: artifacts dl 197ms
 [debug] 	report for scala-basics#scala-basics;0.1 compile produced in E:\Idea Projects\scala-basics\project\target\scala-2.12\sbt-0.13\resolution-cache\reports\scala-basics-scala-basics-compile.xml
 [debug] 	report for scala-basics#scala-basics;0.1 runtime produced in E:\Idea Projects\scala-basics\project\target\scala-2.12\sbt-0.13\resolution-cache\reports\scala-basics-scala-basics-runtime.xml
 [debug] 	report for scala-basics#scala-basics;0.1 test produced in E:\Idea Projects\scala-basics\project\target\scala-2.12\sbt-0.13\resolution-cache\reports\scala-basics-scala-basics-test.xml
@@ -6681,5 +6625,5 @@
 [debug] 	report for scala-basics#scala-basics;0.1 docs produced in E:\Idea Projects\scala-basics\project\target\scala-2.12\sbt-0.13\resolution-cache\reports\scala-basics-scala-basics-docs.xml
 [debug] 	report for scala-basics#scala-basics;0.1 pom produced in E:\Idea Projects\scala-basics\project\target\scala-2.12\sbt-0.13\resolution-cache\reports\scala-basics-scala-basics-pom.xml
 [debug] 	report for scala-basics#scala-basics;0.1 scala-tool produced in E:\Idea Projects\scala-basics\project\target\scala-2.12\sbt-0.13\resolution-cache\reports\scala-basics-scala-basics-scala-tool.xml
-[debug] 	resolve done (11740ms resolve - 2008ms download)
+[debug] 	resolve done (3676ms resolve - 197ms download)
 [info] Done updating.

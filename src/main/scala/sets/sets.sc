@@ -47,4 +47,5 @@ object  sets{
   val f = map(d, x=>x*2)
   forall(f, x => x%14==0)
 
+
 }
