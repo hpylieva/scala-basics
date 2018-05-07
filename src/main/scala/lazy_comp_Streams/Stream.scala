@@ -58,7 +58,6 @@ sealed trait Stream[+A]{
     case Cons(h, t ) if !p(h()) => t().filter(p)
     case _ => empty
   }
- // def filter
 
 }
 case object Empty extends Stream[Nothing]
